@@ -37,6 +37,7 @@ export const start = () => {
                 // io.emit('join_room',roomId)
                 socket.join(roomId);
 
+
             } catch (err) {
                 console.error('💥  Error updating client data:', err);
             }

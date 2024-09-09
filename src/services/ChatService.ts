@@ -112,3 +112,28 @@ export const saveMessage = async (
     return true;
 
 }
+
+export const chatHistoryByUserId = async (userId:string) => {
+
+    let msg_list = await MessageModel.findAll({
+        where: {
+            userId:userId
+        }
+    });
+
+    const list:any[] = []
+
+    if(msg_list.length > 0){
+        msg_list.map(value => {
+
+            list.push({
+                owner: value.dataValues.owner,
+                content: value.dataValues.content
+            })
+
+        })
+
+    }
+    return list;
+
+}
