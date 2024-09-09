@@ -45,8 +45,8 @@ server.on('error', (err) => {
 });
 
 //listen server
-server.listen(5000, () => {
-    console.log(`Server running on http://localhost:${5000}/`);
+server.listen(6000, () => {
+    console.log(`Server running on http://localhost:${6000}/`);
 })
 
 //-----------------------------------------------------------
