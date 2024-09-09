@@ -133,7 +133,7 @@ const chatSocketHandler = (socket: Socket) => {
             console.log("admin sent msg : "+message)
 
             // Broadcast the message to the specified room
-            socket.to(roomId).emit('receive_message', { userId, owner:"admin", message });
+            socket.to(roomId).emit('receive_message', { userId, owner:"admin", message:lastMsg });
 
             console.log(`Admin send msg to room : ${roomId}`);
 
