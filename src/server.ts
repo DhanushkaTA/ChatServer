@@ -4,6 +4,7 @@ dotenv.config();
 
 import express from "express"
 import * as http from "http";
+import cors from 'cors';
 import * as mongoose from "mongoose";
 import {Server} from "socket.io";
 import * as sk from "./sockets/ChatSocketHandler"
@@ -27,6 +28,14 @@ sequelize.sync({alter:false})
 
 
 //-----------------------------------------------------------
+
+app.use(
+    cors({
+        origin: '*',
+        credentials: true,
+    })
+);
+
 
 // Setup socket.io - create server socket - 5000
 export const io = new Server(server, {
