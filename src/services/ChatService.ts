@@ -33,21 +33,31 @@ export const storeWhenConnectClientData = async (userId:string, socketId:string)
 
 export const handleClientDisconnect = async (socketId:string) => {
 
-    let user_by_id = await ClientModel.findOne({
-        where:{
+    // let user_by_id = await ClientModel.findOne({
+    //     where:{
+    //         socketId:socketId
+    //     }
+    // });
+    //
+    // if (user_by_id){
+    //     await ClientModel.update({
+    //         isClientActive:false
+    //     },{
+    //         where: {
+    //             socketId:socketId
+    //         }
+    //     })
+    // }
+
+    let row = await ClientModel.update({
+        isClientActive:false
+    },{
+        where: {
             socketId:socketId
         }
     });
 
-    if (user_by_id){
-        await ClientModel.update({
-            isClientActive:false
-        },{
-            where: {
-                socketId:socketId
-            }
-        })
-    }
+    console.log('Update client as disconnect : '+row[0])
 
     return true;
 
