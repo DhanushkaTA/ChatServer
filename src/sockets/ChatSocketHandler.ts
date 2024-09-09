@@ -85,8 +85,10 @@ const chatSocketHandler = (socket: Socket) => {
 
         try {
 
+            let lastMsg = message[message.length - 1].content
+
             //Save msg in db
-            await ClientService.saveMessage(roomId,userId,'user',message,false,true)
+            await ClientService.saveMessage(roomId,userId,'user',lastMsg,false,true)
 
             const rooms = Array.from(socket.rooms); // Convert Set to Array
             console.log(rooms) // Return the rooms to the admin
@@ -117,11 +119,13 @@ const chatSocketHandler = (socket: Socket) => {
 
         try {
 
+            let lastMsg = message[message.length - 1].content
+
             const rooms = Array.from(socket.rooms); // Convert Set to Array
             console.log(rooms) // Return the rooms to the admin
 
             //Save msg in db
-            await ClientService.saveMessage(roomId,userId,'admin',message,true,false)
+            await ClientService.saveMessage(roomId,userId,'admin',lastMsg,true,false)
 
             // socket.join(roomId);
             console.log("admin sent msg : "+message)
