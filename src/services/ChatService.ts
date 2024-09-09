@@ -66,10 +66,21 @@ export const handleClientDisconnect = async (socketId:string) => {
 
 export const storeChatRoomDetails = async (userId:string,roomId:string) => {
 
-    await ChatRoomModel.create({
-        roomId:roomId,
-        userId:userId
-    })
+    let room_by_id = await ChatRoomModel.findByPk(roomId);
+
+    if (room_by_id){
+        console.log("is room id already saved : ",room_by_id.dataValues)
+    }
+
+
+
+    if (!room_by_id){
+        console.log("save new room with id : "+roomId+" for new user "+userId)
+        await ChatRoomModel.create({
+            roomId:roomId,
+            userId:userId
+        })
+    }
 
     return true;
 
