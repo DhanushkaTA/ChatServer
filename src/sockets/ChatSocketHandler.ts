@@ -98,7 +98,7 @@ const chatSocketHandler = (socket: Socket) => {
             socket.to(roomId).emit('receive_message', { userId:userId, owner:"user", message:lastMsg });
 
             // Notify the admin of a new message (global notification)
-            socket.to('admin_room').emit('admin_new_message', { roomId, owner:"user", userId, message });
+            socket.to('admin_room').emit('admin_new_message', { roomId, owner:"user", userId, message:lastMsg });
 
         }catch (error){
             console.error('💥  Error client msg data:', error);
@@ -120,7 +120,8 @@ const chatSocketHandler = (socket: Socket) => {
 
         try {
 
-            let lastMsg = message[message.length - 1].content
+            // let lastMsg = message[message.length - 1].content
+            let lastMsg = message.content
 
             const rooms = Array.from(socket.rooms); // Convert Set to Array
             console.log(rooms) // Return the rooms to the admin
