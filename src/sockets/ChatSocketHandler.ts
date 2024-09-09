@@ -85,7 +85,8 @@ const chatSocketHandler = (socket: Socket) => {
 
         try {
 
-            let lastMsg = message[message.length - 1].content
+            // let lastMsg = message[message.length - 1].content
+            let lastMsg = message.content
 
             //Save msg in db
             await ClientService.saveMessage(roomId,userId,'user',lastMsg,false,true)
@@ -94,7 +95,7 @@ const chatSocketHandler = (socket: Socket) => {
             console.log(rooms) // Return the rooms to the admin
 
             // Broadcast the message to the specified room
-            socket.to(roomId).emit('receive_message', { userId, owner:"user", message });
+            socket.to(roomId).emit('receive_message', { userId:userId, owner:"user", message:lastMsg });
 
             // Notify the admin of a new message (global notification)
             socket.to('admin_room').emit('admin_new_message', { roomId, owner:"user", userId, message });
