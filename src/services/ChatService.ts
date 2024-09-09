@@ -11,6 +11,7 @@ export const storeWhenConnectClientData = async (userId:string, socketId:string)
 
     if (user_by_id){
         await ClientModel.update({
+            socketId: socketId,
             isClientActive:true
         },{
             where: {
