@@ -2,6 +2,7 @@ import { Socket } from 'socket.io';
 import {io} from "../server";
 import Client from "../models/ClientModel";
 import * as ClientService from "../services/ChatService"
+import {markMessagesAsSeen} from "../services/ChatService";
 
 export const start = () => {
 
@@ -92,8 +93,14 @@ const chatSocketHandler = (socket: Socket) => {
             //Save msg in db
             await ClientService.saveMessage(roomId,userId,'user',lastMsg,false,true)
 
+            //---------------------------------------------------------------
+
             const rooms = Array.from(socket.rooms); // Convert Set to Array
             console.log(rooms) // Return the rooms to the admin
+
+            //-----------------------------------------------------------------
+
+            console.log("\x1b[47m user sent msg : "+message+" \x1b[0m")
 
             // Broadcast the message to the specified room
             socket.to(roomId).emit('receive_message', { userId:userId, owner:"user", message:lastMsg });
@@ -130,13 +137,13 @@ const chatSocketHandler = (socket: Socket) => {
             //Save msg in db
             await ClientService.saveMessage(roomId,userId,'admin',lastMsg,true,false)
 
-            // socket.join(roomId);
-            console.log("admin sent msg : "+message)
+
+            console.log("\x1b[47m admin sent msg : "+message+" \x1b[0m")
 
             // Broadcast the message to the specified room
             socket.to(roomId).emit('receive_message', { userId, owner:"admin", message:lastMsg });
 
-            console.log(`Admin send msg to room : ${roomId}`);
+            console.log(`\x1b[47m Admin send msg to room : ${roomId} \x1b[0m`);
 
         }catch (error){
             console.error('💥  Error admin msg data:', error);
@@ -156,19 +163,33 @@ const chatSocketHandler = (socket: Socket) => {
     // this will trigger right after admin connects to the server
     // Handle when the admin joins the special admin room to receive notifications
     socket.on('admin_join_notifications', () => {
-        console.log('Admin joined notification channel');
+        console.log('\x1b[42m Admin joined notification channel \x1b[0m');
         socket.join('admin_room'); // Admin joins a special room to receive notifications
     });
 
     // Handle admin joining a specific room to monitor
     socket.on('admin_join_room', (roomId) => {
-        console.log(`Admin joined room: ${roomId}`);
+        console.log(`\x1b[42m Admin joined room: ${roomId} \x1b[0m`);
         socket.join(roomId); // Admin joins the specific room
     });
 
     // Handle admin leaving a specific room
     socket.on('admin_leave_room', (roomId) => {
-        console.log(`Admin left room: ${roomId}`);
+        console.log(`\x1b[42m Admin left room: ${roomId} \x1b[0m`);
         socket.leave(roomId); // Admin leaves the specific room
+    });
+
+    // Handle admin leaving a specific room
+    socket.on('seen_message_admin', async (roomId) => {
+        console.log(`\x1b[44m Message seen by admin room : ${roomId} \x1b[0m`);
+
+        await ClientService.markMessagesAsSeen(roomId,'admin')
+    });
+
+    // Handle admin leaving a specific room
+    socket.on('seen_message_client', async (roomId,userId) => {
+        console.log(`\x1b[44m Message seen by ${userId} in room : ${roomId} \x1b[0m`);
+
+        await ClientService.markMessagesAsSeen(roomId,'user')
     });
 };

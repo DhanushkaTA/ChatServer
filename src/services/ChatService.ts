@@ -142,26 +142,83 @@ export const chatHistoryByUserId = async (roomId:string) => {
 
 export const getAllChatsForAdmin = async () => {
 
+    // const newVar = await MessageModel.findAll({
+    //     attributes: [
+    //         'roomId',
+    //         'userId',
+    //         'content',
+    //         'date'
+    //     ],
+    //     where: {
+    //         date: sequelize.literal(`date = (SELECT MAX(date) FROM Messages WHERE roomId = Message.roomId)`)
+    //     },
+    //     order: [['date', 'DESC']]
+    // });
+    //
+    // // console.log(newVar)
+    //
+    // newVar.map(value => {
+    //     console.log(value.dataValues)
+    // })
+
     const newVar = await MessageModel.findAll({
         attributes: [
             'roomId',
             'userId',
             'content',
-            'date'
+            'date',
+            [sequelize.fn('COUNT', sequelize.col('is_seen_by_admin')), 'unreadCount']
         ],
         where: {
-            date: sequelize.literal(`date = (SELECT MAX(date) FROM Messages WHERE roomId = Message.roomId)`)
+            date: sequelize.literal(
+                `(SELECT MAX(date) FROM Messages WHERE roomId = Message.roomId)`
+            ),
+            is_seen_by_admin: false
         },
+        group: ['roomId'],
+        // group: ['roomId', 'userId', 'content', 'date'],
         order: [['date', 'DESC']]
     });
-
-    // console.log(newVar)
 
     newVar.map(value => {
         console.log(value.dataValues)
     })
 
 
+
     return newVar;
+
+}
+
+export const markMessagesAsSeen = async (roomId:string,userType:string) => {
+
+    if(userType==='admin'){
+        let row = await MessageModel.update({
+            is_seen_by_admin:true
+        },{
+            where:{
+                roomId:roomId,
+                owner:'admin',
+                is_seen_by_admin:false
+            }
+        });
+
+        console.log("\x1b[43m cupdated row count : "+row[0]+"\x1b[0m")
+    }else if(userType==='user'){
+        let row = await MessageModel.update({
+            is_seen_by_client:true
+        },{
+            where:{
+                roomId:roomId,
+                owner:'user',
+                is_seen_by_client:false
+            }
+        });
+
+        console.log("\x1b[43m cupdated row count : "+row[0]+"\x1b[0m")
+    }
+
+
+    return true
 
 }
