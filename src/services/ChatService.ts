@@ -3,6 +3,7 @@ import Client from "../models/ClientModel";
 import ChatRoomModel from "../models/ChatRoomModel";
 import ClientModel from "../models/ClientModel";
 import MessageModel from "../models/MessageModel";
+import sequelize from "../db/DbConnection";
 
 
 export const storeWhenConnectClientData = async (userId:string, socketId:string) => {
@@ -135,5 +136,32 @@ export const chatHistoryByUserId = async (userId:string) => {
 
     }
     return list;
+
+}
+
+
+export const getAllChatsForAdmin = async () => {
+
+    const newVar = await MessageModel.findAll({
+        attributes: [
+            'roomId',
+            'owner',
+            'content',
+            'date'
+        ],
+        where: {
+            date: sequelize.literal(`date = (SELECT MAX(date) FROM Messages WHERE roomId = Message.roomId)`)
+        },
+        order: [['date', 'DESC']]
+    });
+
+    // console.log(newVar)
+
+    newVar.map(value => {
+        console.log(value.dataValues)
+    })
+
+
+    return newVar;
 
 }

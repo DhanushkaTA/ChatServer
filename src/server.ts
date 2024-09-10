@@ -11,6 +11,7 @@ import * as sk from "./sockets/ChatSocketHandler"
 import sequelize from "./db/DbConnection";
 import * as ChatService from "./services/ChatService"
 import {CustomResponse} from "./utils/CustomResponse";
+import {getAllChatsForAdmin} from "./services/ChatService";
 
 let app = express();
 let server = http.createServer(app);
@@ -22,6 +23,8 @@ let server = http.createServer(app);
 sequelize.sync({alter:false})
     .then(async () => {
         console.log('Database synchronized');
+
+        await ChatService.getAllChatsForAdmin();
 
     })
     .catch((error) => {
@@ -70,6 +73,32 @@ app.get('/api/v1/chatHistory/:userId', async function (
 
     }catch (error){
         console.error('💥  Error on get chat history on : '+req.params.userId, error);
+    }
+
+})
+
+
+app.get('/api/v1/chatHistory/get/all/chats',async function (
+    req:express.Request,
+    res:express.Response,
+    next:express.NextFunction
+){
+
+
+    try {
+
+        let list = await ChatService.getAllChatsForAdmin();
+
+        res.status(200).send(
+            new CustomResponse(
+                200,
+                "Get all",
+                list
+            )
+        )
+
+    }catch (error){
+
     }
 
 })
