@@ -222,14 +222,28 @@ export const getAllChatsForAdmin = async () => {
     //     ]
     // });
 
+    // const newVar = await MessageModel.findAll({
+    //     attributes: [
+    //         'roomId',
+    //         'userId',
+    //         [Sequelize.literal('(SELECT content FROM `Messages` AS m WHERE m.roomId = `Message`.roomId ORDER BY m.date DESC LIMIT 1)'), 'lastContent'],
+    //         [Sequelize.literal('(SELECT COUNT(*) FROM `Messages` AS m WHERE m.roomId = `Message`.roomId AND m.is_seen_by_admin = 0)'), 'unreadCount']
+    //     ],
+    //     group: ['roomId', 'userId'], // Group by roomId and userId to get the latest message details for each room
+    //     order: [
+    //         [Sequelize.literal('(SELECT date FROM `Messages` AS m WHERE m.roomId = `Message`.roomId ORDER BY m.date DESC LIMIT 1)'), 'DESC']
+    //     ]
+    // });
+
     const newVar = await MessageModel.findAll({
         attributes: [
             'roomId',
             'userId',
             [Sequelize.literal('(SELECT content FROM `Messages` AS m WHERE m.roomId = `Message`.roomId ORDER BY m.date DESC LIMIT 1)'), 'lastContent'],
+            [Sequelize.literal('(SELECT date FROM `Messages` AS m WHERE m.roomId = `Message`.roomId ORDER BY m.date DESC LIMIT 1)'), 'lastContentDate'],
             [Sequelize.literal('(SELECT COUNT(*) FROM `Messages` AS m WHERE m.roomId = `Message`.roomId AND m.is_seen_by_admin = 0)'), 'unreadCount']
         ],
-        group: ['roomId', 'userId'], // Group by roomId and userId to get the latest message details for each room
+        group: ['roomId', 'userId'], // Group by roomId and userId to get distinct room entries
         order: [
             [Sequelize.literal('(SELECT date FROM `Messages` AS m WHERE m.roomId = `Message`.roomId ORDER BY m.date DESC LIMIT 1)'), 'DESC']
         ]
@@ -240,7 +254,7 @@ export const getAllChatsForAdmin = async () => {
     newVar.map(value => {
         console.log(value.dataValues)
     })
-    
+
 
     return newVar;
 
