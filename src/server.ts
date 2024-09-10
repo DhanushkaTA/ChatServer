@@ -53,7 +53,7 @@ sk.start()
 
 //----------------------- API CALLS------------------------------------
 
-app.get('/api/v1/chatHistory/:userId', async function (
+app.get('/api/v1/chatHistory/:roomId', async function (
     req:express.Request,
     res:express.Response,
     next:express.NextFunction
@@ -61,7 +61,7 @@ app.get('/api/v1/chatHistory/:userId', async function (
 
     try {
 
-        let list = await ChatService.chatHistoryByUserId(req.params.userId);
+        let list = await ChatService.chatHistoryByUserId(req.params.roomId);
 
         res.status(200).send(
             new CustomResponse(

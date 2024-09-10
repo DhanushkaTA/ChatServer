@@ -114,11 +114,11 @@ export const saveMessage = async (
 
 }
 
-export const chatHistoryByUserId = async (userId:string) => {
+export const chatHistoryByUserId = async (roomId:string) => {
 
     let msg_list = await MessageModel.findAll({
         where: {
-            userId:userId
+            roomId:roomId
         }
     });
 
@@ -145,7 +145,7 @@ export const getAllChatsForAdmin = async () => {
     const newVar = await MessageModel.findAll({
         attributes: [
             'roomId',
-            'owner',
+            'userId',
             'content',
             'date'
         ],
