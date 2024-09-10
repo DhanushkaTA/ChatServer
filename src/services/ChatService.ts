@@ -216,6 +216,8 @@ export const getAllChatsForAdmin = async () => {
 
 export const markMessagesAsSeen = async (roomId:string,userType:string) => {
 
+    console.log(roomId)
+
     if(userType==='admin'){
         //seen by admin
         let row = await MessageModel.update({
