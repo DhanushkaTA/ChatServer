@@ -11,7 +11,7 @@ import * as sk from "./sockets/ChatSocketHandler"
 import sequelize from "./db/DbConnection";
 import * as ChatService from "./services/ChatService"
 import {CustomResponse} from "./utils/CustomResponse";
-import {getAllChatsForAdmin} from "./services/ChatService";
+import {getAdminUnReadCountByRoomId, getAllChatsForAdmin} from "./services/ChatService";
 
 let app = express();
 let server = http.createServer(app);
@@ -24,7 +24,8 @@ sequelize.sync({alter:false})
     .then(async () => {
         console.log('Database synchronized');
 
-        await ChatService.getAllChatsForAdmin();
+        await ChatService.getAdminUnReadCountByRoomId('room_U-1001');
+        // await ChatService.getAllChatsForAdmin();
 
     })
     .catch((error) => {

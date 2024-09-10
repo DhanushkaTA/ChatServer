@@ -4,6 +4,7 @@ import ChatRoomModel from "../models/ChatRoomModel";
 import ClientModel from "../models/ClientModel";
 import MessageModel from "../models/MessageModel";
 import sequelize from "../db/DbConnection";
+import {Model} from "sequelize";
 
 
 export const storeWhenConnectClientData = async (userId:string, socketId:string) => {
@@ -139,6 +140,29 @@ export const chatHistoryByUserId = async (roomId:string) => {
 
 }
 
+export const getAdminUnReadCountByRoomId = async (roomId:string) => {
+
+    let list:(Model<any,any>)[] = await MessageModel.findAll({
+        attributes:[
+            [sequelize.fn('COUNT', sequelize.col('is_seen_by_admin')), 'unreadCount']
+        ],
+        where:{
+            roomId:roomId,
+            owner:'user',
+            is_seen_by_admin:false
+        }
+    });
+
+    // newVar.map(value => {
+    //     console.log(value.dataValues)
+    // })
+
+    console.log("\x1b[35m Admin unread mag in chat room "+roomId+" : "+list[0]?.dataValues?.unreadCount+" \x1b[0m")
+
+    return list[0]?.dataValues?.unreadCount
+
+}
+
 
 export const getAllChatsForAdmin = async () => {
 
@@ -193,24 +217,26 @@ export const getAllChatsForAdmin = async () => {
 export const markMessagesAsSeen = async (roomId:string,userType:string) => {
 
     if(userType==='admin'){
+        //seen by admin
         let row = await MessageModel.update({
             is_seen_by_admin:true
         },{
             where:{
                 roomId:roomId,
-                owner:'admin',
+                // owner:'user',
                 is_seen_by_admin:false
             }
         });
 
-        console.log("\x1b[43m cupdated row count : "+row[0]+"\x1b[0m")
+        console.log("\x1b[43m updated row count : "+row[0]+"\x1b[0m")
     }else if(userType==='user'){
+        //seen by user
         let row = await MessageModel.update({
             is_seen_by_client:true
         },{
             where:{
                 roomId:roomId,
-                owner:'user',
+                // owner:'admin',
                 is_seen_by_client:false
             }
         });
