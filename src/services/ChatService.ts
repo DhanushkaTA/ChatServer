@@ -243,7 +243,7 @@ export const markMessagesAsSeen = async (roomId:string,userType:string) => {
             }
         });
 
-        console.log("\x1b[43m cupdated row count : "+row[0]+"\x1b[0m")
+        console.log("\x1b[43m updated row count : "+row[0]+"\x1b[0m")
     }
 
 
