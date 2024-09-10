@@ -24,7 +24,7 @@ sequelize.sync({alter:false})
     .then(async () => {
         console.log('Database synchronized');
 
-        await ChatService.getAllChatsForAdmin();
+        // await ChatService.getAllChatsForAdmin();
 
     })
     .catch((error) => {
