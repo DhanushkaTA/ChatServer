@@ -53,7 +53,7 @@ sk.start()
 
 //----------------------- API CALLS------------------------------------
 
-app.get('/api/v1/chatHistory/:roomId', async function (
+app.get('/api/v1/chat/chatHistory/:roomId', async function (
     req:express.Request,
     res:express.Response,
     next:express.NextFunction
@@ -78,7 +78,7 @@ app.get('/api/v1/chatHistory/:roomId', async function (
 })
 
 
-app.get('/api/v1/chatHistory/get/all/chats',async function (
+app.get('/api/v1/chat/chatHistory/get/all/chats',async function (
     req:express.Request,
     res:express.Response,
     next:express.NextFunction
