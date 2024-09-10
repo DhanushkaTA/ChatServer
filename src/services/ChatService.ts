@@ -4,7 +4,7 @@ import ChatRoomModel from "../models/ChatRoomModel";
 import ClientModel from "../models/ClientModel";
 import MessageModel from "../models/MessageModel";
 import sequelize from "../db/DbConnection";
-import {Model} from "sequelize";
+import {Model, Sequelize} from "sequelize";
 
 
 export const storeWhenConnectClientData = async (userId:string, socketId:string) => {
@@ -185,26 +185,57 @@ export const getAllChatsForAdmin = async () => {
     //     console.log(value.dataValues)
     // })
 
+    // const newVar = await MessageModel.findAll({
+    //     attributes: [
+    //         'roomId',
+    //         'userId',
+    //         'content',
+    //         'date',
+    //         [sequelize.fn('COUNT', sequelize.col('is_seen_by_admin')), 'unreadCount']
+    //     ],
+    //     where: {
+    //         date: sequelize.literal(
+    //             `(SELECT MAX(date) FROM Messages WHERE roomId = Message.roomId)`
+    //         ),
+    //         is_seen_by_admin: false
+    //     },
+    //     group: ['roomId'],
+    //     // group: ['roomId', 'userId', 'content', 'date'],
+    //     order: [['date', 'DESC']]
+    // });
+    //
+    // // console.log(newVar)
+    //
+    // newVar.map(value => {
+    //     console.log(value.dataValues)
+    // })
+
+    // const newVar = await MessageModel.findAll({
+    //     attributes: [
+    //         'roomId',
+    //         'userId',
+    //         [Sequelize.literal('(SELECT content FROM `Messages` AS m WHERE m.roomId = `Message`.roomId ORDER BY m.date DESC LIMIT 1)'), 'lastContent']
+    //     ],
+    //     group: ['roomId', 'userId'], // Group by roomId and userId to get the latest message details for each room
+    //     order: [
+    //         [Sequelize.literal('(SELECT date FROM `Messages` AS m WHERE m.roomId = `Message`.roomId ORDER BY m.date DESC LIMIT 1)'), 'DESC']
+    //     ]
+    // });
+
     const newVar = await MessageModel.findAll({
         attributes: [
             'roomId',
             'userId',
-            'content',
-            'date',
-            // [sequelize.fn('COUNT', sequelize.col('is_seen_by_admin')), 'unreadCount']
+            [Sequelize.literal('(SELECT content FROM `Messages` AS m WHERE m.roomId = `Message`.roomId ORDER BY m.date DESC LIMIT 1)'), 'lastContent'],
+            [Sequelize.literal('(SELECT COUNT(*) FROM `Messages` AS m WHERE m.roomId = `Message`.roomId AND m.is_seen_by_admin = 0)'), 'unreadCount']
         ],
-        where: {
-            date: sequelize.literal(
-                `(SELECT MAX(date) FROM Messages WHERE roomId = Message.roomId)`
-            ),
-            is_seen_by_admin: false
-        },
-        group: ['roomId'],
-        // group: ['roomId', 'userId', 'content', 'date'],
-        order: [['date', 'DESC']]
+        group: ['roomId', 'userId'], // Group by roomId and userId to get the latest message details for each room
+        order: [
+            [Sequelize.literal('(SELECT date FROM `Messages` AS m WHERE m.roomId = `Message`.roomId ORDER BY m.date DESC LIMIT 1)'), 'DESC']
+        ]
     });
 
-    console.log(newVar)
+    // console.log(newVar)
 
     newVar.map(value => {
         console.log(value.dataValues)
@@ -212,7 +243,8 @@ export const getAllChatsForAdmin = async () => {
 
 
 
-    return newVar;
+
+    // return newVar;
 
 }
 
