@@ -240,11 +240,9 @@ export const getAllChatsForAdmin = async () => {
     newVar.map(value => {
         console.log(value.dataValues)
     })
+    
 
-
-
-
-    // return newVar;
+    return newVar;
 
 }
 
