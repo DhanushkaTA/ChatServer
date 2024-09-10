@@ -24,8 +24,8 @@ sequelize.sync({alter:false})
     .then(async () => {
         console.log('Database synchronized');
 
-        // await ChatService.getAdminUnReadCountByRoomId('room_U-1001');
-        // await ChatService.getAllChatsForAdmin();
+        await ChatService.getAdminUnReadCountByRoomId('room_U-1001');
+        await ChatService.getAllChatsForAdmin();
 
     })
     .catch((error) => {

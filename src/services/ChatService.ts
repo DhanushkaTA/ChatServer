@@ -191,7 +191,7 @@ export const getAllChatsForAdmin = async () => {
             'userId',
             'content',
             'date',
-            [sequelize.fn('COUNT', sequelize.col('is_seen_by_admin')), 'unreadCount']
+            // [sequelize.fn('COUNT', sequelize.col('is_seen_by_admin')), 'unreadCount']
         ],
         where: {
             date: sequelize.literal(
@@ -203,6 +203,8 @@ export const getAllChatsForAdmin = async () => {
         // group: ['roomId', 'userId', 'content', 'date'],
         order: [['date', 'DESC']]
     });
+
+    console.log(newVar)
 
     newVar.map(value => {
         console.log(value.dataValues)
